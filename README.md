@@ -72,6 +72,9 @@ MAX_QUEUE = 5000  # 無料枠想定の最大同時待機ユーザー数
 
 ## 初期設定手順
 
+### Vercelのアカウント作成
+* 以下を参照 https://zenn.dev/icck/articles/f7aa3f5304cd1a
+
 ### Vercelのインストール
 ```
 npm install -g vercel
@@ -92,4 +95,27 @@ npx create-next-app@latest frontend
 cd frontend
 npm run dev
 ```
-http://localhost:3000でNext.jsのデフォルトページにアクセスできればOK。
+* http://localhost:3000でNext.jsのデフォルトページにアクセスできればOK。
+
+### API（Go）の最小実装
+* /api/queue.go を作って Vercel Functions として動かす
+* 最初は「join → ticketId を返す」だけでOK
+* Redisにはまだ接続しなくても良い（モックで良い）
+
+### フロントとAPIをつなぐ
+* index.tsx で /api/queue/join を叩いて ticketId を表示
+* /status.tsx でダミーデータをポーリングして「残り3分です」みたいな表示をテスト
+
+### Redis を接続する
+* redis.go を作り、join時に LPUSH でキューに入れる
+* statusで LRANGE して順番を返すようにする
+
+### 無料枠アクセス制限を入れる
+* join の処理に if queue_length > MAX_QUEUE → 429 を追加
+* フロント側でエラーハンドリングして「入場不可画面」を出す
+
+### Vercel にデプロイ
+```
+vercel
+```
+→ GitHub 連携して push すれば、自動でCDN配信される
