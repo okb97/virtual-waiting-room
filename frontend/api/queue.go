@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"math/rand"
 	"net/http"
+	"time"
 )
 
 type JoinResponse struct {
@@ -16,14 +17,17 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	if r.Method == http.MethodPost {
+		rand.Seed(time.Now().UnixNano())
 		ticketId := generateTicketID()
 
 		resp := JoinResponse{TicketID: ticketId}
 		json.NewEncoder(w).Encode(resp)
 		return
 	}
-	// 未対応のエンドポイントは404
-	http.NotFound(w, r)
+	if r.Method != http.MethodPost {
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
 }
 
 func generateTicketID() string {
