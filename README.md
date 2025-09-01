@@ -68,3 +68,28 @@
 ```go
 MAX_QUEUE = 5000  # 無料枠想定の最大同時待機ユーザー数
 ```
+
+
+## 初期設定手順
+
+### Vercelのインストール
+```
+npm install -g vercel
+```
+### Redisのアカウント作成
+  * Redis データベースを 1つ作成
+  * 接続URL と トークンを取得
+  * .env.local に設定
+    - 以下を参照
+https://zenn.dev/tkithrta/articles/a56603a37b08f0
+```
+UPSTASH_REDIS_REST_UR=xxxx
+UPSTASH_REDIS_REST_TOKEN=xxxx
+```
+### Next.jsプロジェクト作成
+```
+npx create-next-app@latest frontend
+cd frontend
+npm run dev
+```
+http://localhost:3000でNext.jsのデフォルトページにアクセスできればOK。
