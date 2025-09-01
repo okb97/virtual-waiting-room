@@ -35,13 +35,13 @@
 │   │   ├─ Countdown.tsx        ← カウントダウン表示コンポーネント
 │   │   ├─ ProgressBar.tsx      ← 待ち順の進捗バー表示
 │   │   └─ TicketButton.tsx     ← チケットサイトにアクセスするボタン
-│   └─ pages
-│       ├─ index.tsx            ← 待合室トップページ
-│       ├─ status.tsx           ← ポーリングで順番・進捗表示
-│       └─ _app.tsx             ← 共通レイアウト・環境変数設定
-├─ api
-│   ├─ queue.go                 ← join, status, enter エンドポイント
-│   └─ redis.go                 ← Redis操作ラッパー
+│   ├─ pages
+│   │   ├─ index.tsx            ← 待合室トップページ
+│   │   ├─ status.tsx           ← ポーリングで順番・進捗表示
+│   │   └─ _app.tsx             ← 共通レイアウト・環境変数設定
+│   └─ api 
+│       ├─queue.go                 ← join, status, enter エンドポイント
+│       └─redis.go                 ← Redis操作ラッパー
 ├─ utils
 │   ├─ timeUtils.go             ← 推定待ち時間計算関数
 │   └─ queueUtils.go            ← 順番・進捗計算関数
