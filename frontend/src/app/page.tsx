@@ -20,6 +20,16 @@ export default function Home() {
     joinQueue();
   },[])
 
+  useEffect(() => {
+    if(!ticketId) return
+
+    const interval = setInterval(() => {
+      setPosition((prev) => (prev && prev > 1 ? prev - 1 : 0))
+      setWaitTime((prev) => (prev && prev > 0 ? prev - 1 : 0))
+    },3000)
+    return () => clearInterval(interval)
+  },[ticketId])
+
 
   return (
     <main>
