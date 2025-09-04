@@ -2,13 +2,19 @@ package api
 
 import (
 	"encoding/json"
-	"math/rand"
+	"log"
 	"net/http"
-	"time"
+
+	"github.com/google/uuid"
 )
 
 type JoinResponse struct {
 	TicketID string `json:"ticketId"`
+}
+
+type StatusResponse struct {
+	WaitTime int64 `json:"waitTime"`
+	Position int64 `json:"position"`
 }
 
 // VercelのサーバーレスFunction用エントリポイント
@@ -17,24 +23,54 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	if r.Method == http.MethodPost {
-		rand.Seed(time.Now().UnixNano())
-		ticketId := generateTicketID()
-
-		resp := JoinResponse{TicketID: ticketId}
-		json.NewEncoder(w).Encode(resp)
-		return
+		handleJoin(w, r)
 	}
-	if r.Method != http.MethodPost {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
-		return
+	if r.Method == http.MethodGet {
+		handleStatus(w, r)
 	}
 }
 
-func generateTicketID() string {
-	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-	b := make([]byte, 8)
-	for i := range b {
-		b[i] = charset[rand.Intn(len(charset))]
+func handleJoin(w http.ResponseWriter, r *http.Request) {
+	log.Println("handleJoin called")
+	ticketId := uuid.New().String()
+
+	_, err := redisCmd("RPUSH", "queue", ticketId)
+	if err != nil {
+		log.Printf("Redis REST error: %v\n", err)
+		http.Error(w, "failed to join queue", http.StatusInternalServerError)
+		return
 	}
-	return string(b)
+
+	log.Println("ticket issued:", ticketId)
+	json.NewEncoder(w).Encode(JoinResponse{TicketID: ticketId})
+}
+
+func handleStatus(w http.ResponseWriter, r *http.Request) {
+	ticketId := r.URL.Query().Get("ticketId")
+	if ticketId == "" {
+		http.Error(w, "ticketId required", http.StatusBadRequest)
+		return
+	}
+	res, err := redisCmd("LPOS", "queue", ticketId)
+	if err != nil {
+		log.Printf("Redis REST error: %v\n", err)
+		http.Error(w, "redis error", http.StatusInternalServerError)
+		return
+	}
+
+	// LPOSの結果は float64 になる
+	posF, ok := res["result"].(float64)
+	if !ok {
+		http.Error(w, "not in queue", http.StatusNotFound)
+		return
+	}
+	pos := int64(posF)
+
+	// 仮で「1人=30秒待ち」
+	waitTime := pos * 30 / 60
+
+	json.NewEncoder(w).Encode(StatusResponse{
+		Position: pos,
+		WaitTime: waitTime,
+	})
 }
