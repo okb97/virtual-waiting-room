@@ -17,31 +17,29 @@ type StatusResponse struct {
 	Position int64 `json:"position"`
 }
 
-// VercelのサーバーレスFunction用エントリポイント
 func Handler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Type", "application/json")
 
 	if r.Method == http.MethodPost {
 		handleJoin(w, r)
+		return
 	}
 	if r.Method == http.MethodGet {
 		handleStatus(w, r)
+		return
 	}
+	w.WriteHeader(http.StatusMethodNotAllowed)
 }
 
 func handleJoin(w http.ResponseWriter, r *http.Request) {
-	log.Println("handleJoin called")
 	ticketId := uuid.New().String()
-
-	_, err := redisCmd("RPUSH", "queue", ticketId)
-	if err != nil {
-		log.Printf("Redis REST error: %v\n", err)
+	// RedisRPush を PushToQueue に変更
+	if _, err := PushToQueue("queue", ticketId); err != nil {
+		log.Println("PushToQueue error:", err)
 		http.Error(w, "failed to join queue", http.StatusInternalServerError)
 		return
 	}
-
-	log.Println("ticket issued:", ticketId)
 	json.NewEncoder(w).Encode(JoinResponse{TicketID: ticketId})
 }
 
@@ -51,22 +49,18 @@ func handleStatus(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "ticketId required", http.StatusBadRequest)
 		return
 	}
-	res, err := redisCmd("LPOS", "queue", ticketId)
+	log.Printf("Received ticketId: %s", ticketId)
+
+	queueLength, err := GetQueueLength("queue")
 	if err != nil {
-		log.Printf("Redis REST error: %v\n", err)
+		log.Println("GetQueueLength error:", err)
 		http.Error(w, "redis error", http.StatusInternalServerError)
 		return
 	}
+	log.Printf("Current queue length: %d", queueLength)
 
-	// LPOSの結果は float64 になる
-	posF, ok := res["result"].(float64)
-	if !ok {
-		http.Error(w, "not in queue", http.StatusNotFound)
-		return
-	}
-	pos := int64(posF)
-
-	// 仮で「1人=30秒待ち」
+	pos := int64(queueLength)
+	log.Printf("Calculated position: %d", pos)
 	waitTime := pos * 30 / 60
 
 	json.NewEncoder(w).Encode(StatusResponse{
