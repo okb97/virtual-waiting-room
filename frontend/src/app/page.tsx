@@ -23,9 +23,11 @@ export default function Home() {
   useEffect(() => {
     if(!ticketId) return
 
-    const interval = setInterval(() => {
-      setPosition((prev) => (prev && prev > 1 ? prev - 1 : 0))
-      setWaitTime((prev) => (prev && prev > 0 ? prev - 1 : 0))
+    const interval = setInterval(async() => {
+      const res = await fetch(`/api/queue?ticketId=${ticketId}`)
+    const data = await res.json()
+    setPosition(data.position)
+    setWaitTime(data.waitTime)
     },3000)
     return () => clearInterval(interval)
   },[ticketId])
