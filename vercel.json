@@ -1,11 +1,14 @@
 {
+  "rewrites": [
+    {
+      "source": "/api/queue",
+      "destination": "/frontend/api/queue.go"
+    }
+  ],
   "builds": [
     {
-      "src": "frontend/api/**/*.go",
-      "use": "@vercel/go",
-      "config": {
-        "maxLambdaSize": "50mb"
-      }
+      "src": "frontend/api/queue.go",
+      "use": "@vercel/go"
     },
     {
       "src": "frontend/package.json",
