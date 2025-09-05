@@ -1,0 +1,15 @@
+{
+  "builds": [
+    {
+      "src": "frontend/api/**/*.go",
+      "use": "@vercel/go",
+      "config": {
+        "maxLambdaSize": "50mb"
+      }
+    },
+    {
+      "src": "frontend/package.json",
+      "use": "@vercel/next"
+    }
+  ]
+}
