@@ -6,13 +6,11 @@
     }
   ],
   "builds": [
-    {
-      "src": "frontend/api/queue.go",
-      "use": "@vercel/go"
-    },
-    {
-      "src": "frontend/package.json",
-      "use": "@vercel/next"
-    }
+    { "src": "api/**/*.go", "use": "@vercel/go" },
+    { "src": "frontend/package.json", "use": "@vercel/next" }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/(.*)", "dest": "frontend/$1" }
   ]
 }

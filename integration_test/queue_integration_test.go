@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/okb97/virtual-waiting-room/frontend/api"
+	"github.com/okb97/virtual-waiting-room/api"
 )
 
 func TestMain(m *testing.M) {
