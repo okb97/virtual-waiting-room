@@ -17,7 +17,7 @@ func TestMain(m *testing.M) {
 }
 
 func clearQueue(t *testing.T, queueName string) {
-	_, err := redisCommand([]interface{}{"DEL", queueName})
+	_, err := RedisCommand([]interface{}{"DEL", queueName})
 	if err != nil {
 		t.Fatalf("failed to clear queue:%v", err)
 	}
@@ -35,7 +35,7 @@ func TestPushToQueue(t *testing.T) {
 		t.Errorf("expected length=1, got %d", newLen)
 	}
 
-	res, err := redisCommand([]interface{}{"LRANGE", queueName, 0, -1})
+	res, err := RedisCommand([]interface{}{"LRANGE", queueName, 0, -1})
 	if err != nil {
 		t.Fatalf("LRANGE error: %v", err)
 	}

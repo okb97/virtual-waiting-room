@@ -33,17 +33,17 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	if r.Method == http.MethodPost {
-		handleJoin(w, r)
+		HandleJoin(w, r)
 		return
 	}
 	if r.Method == http.MethodGet {
-		handleStatus(w, r)
+		HandleStatus(w, r)
 		return
 	}
 	w.WriteHeader(http.StatusMethodNotAllowed)
 }
 
-func handleJoin(w http.ResponseWriter, r *http.Request) {
+func HandleJoin(w http.ResponseWriter, r *http.Request) {
 	ticketId := uuid.New().String()
 	// RedisRPush を PushToQueue に変更
 	if _, err := PushToQueue("queue", ticketId); err != nil {
@@ -54,7 +54,7 @@ func handleJoin(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(JoinResponse{TicketID: ticketId})
 }
 
-func handleStatus(w http.ResponseWriter, r *http.Request) {
+func HandleStatus(w http.ResponseWriter, r *http.Request) {
 	ticketId := r.URL.Query().Get("ticketId")
 	if ticketId == "" {
 		http.Error(w, "ticketId required", http.StatusBadRequest)
@@ -62,9 +62,9 @@ func handleStatus(w http.ResponseWriter, r *http.Request) {
 	}
 	log.Printf("Received ticketId: %s", ticketId)
 
-	queueLength, err := GetQueueLength("queue")
+	queueLength, err := GetQueuePosition("queue", ticketId)
 	if err != nil {
-		log.Println("GetQueueLength error:", err)
+		log.Println("GetQueuePosition error:", err)
 		http.Error(w, "redis error", http.StatusInternalServerError)
 		return
 	}
@@ -80,7 +80,7 @@ func handleStatus(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func redisCommand(command []interface{}) ([]byte, error) {
+func RedisCommand(command []interface{}) ([]byte, error) {
 	if UPSTASH_REST_API_ENDPOINT == "" || UPSTASH_REST_API_TOKEN == "" {
 		return nil, fmt.Errorf("Upstash APIの認証情報が設定されていません。")
 	}
@@ -147,7 +147,7 @@ func PushToQueue(queueName string, items ...string) (int, error) {
 		command = append(command, item)
 	}
 
-	res, err := redisCommand(command)
+	res, err := RedisCommand(command)
 	if err != nil {
 		return 0, err
 	}
@@ -160,7 +160,7 @@ func PushToQueue(queueName string, items ...string) (int, error) {
 }
 
 func PopFromQueue(queueName string) (string, error) {
-	res, err := redisCommand([]interface{}{"LPOP", queueName})
+	res, err := RedisCommand([]interface{}{"LPOP", queueName})
 	if err != nil {
 		return "", err
 	}
@@ -174,14 +174,14 @@ func PopFromQueue(queueName string) (string, error) {
 	return popResult, nil
 }
 
-func GetQueueLength(queueName string) (int, error) {
-	res, err := redisCommand([]interface{}{"LLEN", queueName})
+func GetQueuePosition(queueName, ticketId string) (int, error) {
+	res, err := RedisCommand([]interface{}{"LPOS", queueName, ticketId})
 	if err != nil {
 		return 0, err
 	}
-	var length int
-	if err := json.Unmarshal(res, &length); err != nil {
+	var pos int
+	if err := json.Unmarshal(res, &pos); err != nil {
 		return 0, fmt.Errorf("長さ結果のJSONパースエラー: %v", err)
 	}
-	return length, nil
+	return pos, nil
 }
