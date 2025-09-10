@@ -9,7 +9,6 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	// Upstashの認証情報を設定
 	os.Setenv("UPSTASH_REDIS_REST_URL", "あなたのRESTエンドポイントURL")
 	os.Setenv("UPSTASH_REDIS_REST_TOKEN", "あなたのRESTトークン")
 	os.Setenv("GO_ENV", "test")
@@ -51,6 +50,26 @@ func TestPushToQueueIntegration(t *testing.T) {
 		if items[i] != v {
 			t.Errorf("expected %s at position %d, got %s", v, i, items[i])
 		}
+	}
+}
+
+func TestPopFromQueueIntegration(t *testing.T) {
+	queueName := "integration_test_queue"
+	ticket1 := "ticket_1"
+
+	_, err := api.RedisCommand([]interface{}{"RPUSH", queueName, ticket1})
+	if err != nil {
+		t.Fatalf("RPUSHエラー: %v", err)
+	}
+
+	val, err := api.PopFromQueue(queueName)
+	if err != nil {
+		t.Fatalf("PopFromQueueエラー: %v", err)
+	}
+
+	expected := ticket1
+	if val != expected {
+		t.Errorf("Pop結果が不正 got=%s want=%s", val, expected)
 	}
 }
 
