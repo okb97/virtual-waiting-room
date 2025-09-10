@@ -57,6 +57,8 @@ func TestPopFromQueueIntegration(t *testing.T) {
 	queueName := "integration_test_queue"
 	ticket1 := "ticket_1"
 
+	clearQueue(t, queueName)
+
 	_, err := api.RedisCommand([]interface{}{"RPUSH", queueName, ticket1})
 	if err != nil {
 		t.Fatalf("RPUSHエラー: %v", err)
@@ -97,5 +99,26 @@ func TestGetQueuePositionIntegration(t *testing.T) {
 	}
 	if pos2 != 1 {
 		t.Errorf("expected position 1, got %d", pos2)
+	}
+}
+
+func TestRemoveTicket(t *testing.T) {
+	queueName := "integration_test_queue"
+	ticket1 := "ticket_1"
+	ticket2 := "ticket_2"
+	ticket3 := "ticket_3"
+
+	clearQueue(t, queueName)
+
+	if _, err := api.PushToQueue(queueName, ticket1, ticket2, ticket3); err != nil {
+		t.Fatalf("PushToQueue failed: %v", err)
+	}
+
+	res, err := api.RemoveTicket(queueName, ticket1)
+	if err != nil {
+		t.Fatalf("RemoveTicket failed: %v", err)
+	}
+	if res != 1 {
+		t.Errorf("expected removed count 1, got %d", res)
 	}
 }

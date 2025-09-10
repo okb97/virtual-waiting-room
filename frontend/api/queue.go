@@ -185,3 +185,15 @@ func GetQueuePosition(queueName, ticketId string) (int, error) {
 	}
 	return pos, nil
 }
+
+func RemoveTicket(queueName, ticketId string) (int, error) {
+	res, err := RedisCommand([]interface{}{"LREM", queueName, 0, ticketId})
+	if err != nil {
+		return 0, err
+	}
+	var result int
+	if err := json.Unmarshal(res, &result); err != nil {
+		return 0, fmt.Errorf("LREMのJSONパースエラー: %v", err)
+	}
+	return result, nil
+}
