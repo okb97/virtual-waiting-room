@@ -9,10 +9,13 @@ export default function Home() {
 
   useEffect(() => {
     const joinQueue = async () => {
+      console.log("sending POST /api/queue")
       const res = await fetch("/api/queue",{
         method : "POST"
       });
+      console.log("response status:", res.status);
       const data = await res.json();
+      console.log("response data:", data);
       setTicketId(data.ticketId)
       setPosition(5)
       setWaitTime(100)
