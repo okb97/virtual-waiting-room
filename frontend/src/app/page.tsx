@@ -9,18 +9,18 @@ export default function Home() {
 
   useEffect(() => {
     const joinQueue = async () => {
-      // const res = await fetch("/api/queue",{
-      //   method : "POST"
-      // });
-      // const data = await res.json();
-      // setTicketId(data.ticketId)
-      // setPosition(5)
-      // setWaitTime(100)
-       const fakeData = {
-        ticketId: "dummy-" + Math.random().toString(36).slice(2, 8),
-        position: 5,
-        waitTime: 100,
-      }
+      const res = await fetch("/api/queue",{
+        method : "POST"
+      });
+      const data = await res.json();
+      setTicketId(data.ticketId)
+      setPosition(5)
+      setWaitTime(100)
+      // const fakeData = {
+      //   ticketId: "dummy-" + Math.random().toString(36).slice(2, 8),
+      //   position: 5,
+      //   waitTime: 100,
+      // }
     }
     joinQueue();
   },[])
@@ -29,12 +29,12 @@ export default function Home() {
     if(!ticketId) return
 
     const interval = setInterval(async() => {
-      // const res = await fetch(`/api/queue?ticketId=${ticketId}`)
-      // const data = await res.json()
-      // setPosition(data.position)
-      // setWaitTime(data.waitTime)
-      setPosition((prev) => prev !== null ? Math.max(prev - 1, 0) : null)
-      setWaitTime((prev) => prev !== null ? Math.max(prev - 1, 0) : null)
+      const res = await fetch(`/api/queue?ticketId=${ticketId}`)
+      const data = await res.json()
+      setPosition(data.position)
+      setWaitTime(data.waitTime)
+      // setPosition((prev) => prev !== null ? Math.max(prev - 1, 0) : null)
+      // setWaitTime((prev) => prev !== null ? Math.max(prev - 1, 0) : null)
     },3000)
     return () => clearInterval(interval)
   },[ticketId])
