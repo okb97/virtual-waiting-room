@@ -1,16 +1,25 @@
 {
-  "rewrites": [
+  "builds": [
     {
-      "source": "/api/queue",
-      "destination": "/frontend/api/queue.go"
+      "src": "frontend/package.json",
+      "use": "@vercel/next"
+    },
+    {
+      "src": "api/queue.go",
+      "use": "@vercel/go",
+      "config": {
+        "zeroConfig": true
+      }
     }
   ],
-  "builds": [
-    { "src": "api/**/*.go", "use": "@vercel/go" },
-    { "src": "frontend/package.json", "use": "@vercel/next" }
-  ],
   "routes": [
-    { "src": "/api/(.*)", "dest": "/api/$1" },
-    { "src": "/(.*)", "dest": "frontend/$1" }
+    {
+      "src": "/api/queue",
+      "dest": "api/queue.go"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "frontend"
+    }
   ]
 }
