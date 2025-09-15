@@ -16,6 +16,10 @@
     {
       "src": "/api/queue",
       "dest": "api/queue.go"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "frontend"
     }
   ]
 }
