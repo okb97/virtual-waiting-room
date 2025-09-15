@@ -14,6 +14,10 @@
   ],
   "routes": [
     {
+      "src": "/_next/static/(.*)",
+      "dest": "frontend/_next/static/$1"
+    },
+    {
       "src": "/api/queue",
       "dest": "api/queue.go"
     },
