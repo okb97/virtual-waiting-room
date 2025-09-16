@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/okb97/virtual-waiting-room/api"
+	"github.com/okb97/virtual-waiting-room/api/checkin"
 )
 
 func TestMain(m *testing.M) {
@@ -64,7 +65,7 @@ func TestPopFromQueueIntegration(t *testing.T) {
 		t.Fatalf("RPUSHエラー: %v", err)
 	}
 
-	val, err := api.PopFromQueue(queueName)
+	val, err := checkin.PopFromQueue(queueName)
 	if err != nil {
 		t.Fatalf("PopFromQueueエラー: %v", err)
 	}

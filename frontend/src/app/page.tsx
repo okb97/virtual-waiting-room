@@ -31,7 +31,7 @@ export default function Home() {
       const data = await res.json()
       setPosition(data.position)
       setWaitTime(data.waitTime)
-      if(data.position == 1){
+      if(data.position == 0){
         console.log("あなたの版が来ました！チケット購入ページへ移動します。")
         clearInterval(interval)
 
