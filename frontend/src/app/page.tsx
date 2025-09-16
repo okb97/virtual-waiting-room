@@ -1,8 +1,10 @@
 "use client"
 
+import { useRouter } from 'next/router';
 import {useEffect, useState} from 'react';
 
 export default function Home() {
+  const router = useRouter()
   const [ticketId, setTicketId] = useState<string | null>(null)
   const [position, setPosition] = useState<number | null>(null)
   const [waitTime, setWaitTime] = useState<number | null>(null)
@@ -40,7 +42,7 @@ export default function Home() {
         })
 
         if(checkInRes.ok){
-          window.location.href = '/purchase';
+          router.push('/purchase');
         }
         else{
           console.error("キューの削除に失敗しました")
