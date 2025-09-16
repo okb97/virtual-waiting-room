@@ -31,6 +31,21 @@ export default function Home() {
       const data = await res.json()
       setPosition(data.position)
       setWaitTime(data.waitTime)
+      if(data.position == 1){
+        console.log("あなたの版が来ました！チケット購入ページへ移動します。")
+        clearInterval(interval)
+
+        const checkInRes = await fetch(`/api/checkin`,{
+          method:'DELETE'
+        })
+
+        if(checkInRes.ok){
+          window.location.href = '/purchase';
+        }
+        else{
+          console.error("キューの削除に失敗しました")
+        }
+      }
     },30000)
     return () => clearInterval(interval)
   },[ticketId])
