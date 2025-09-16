@@ -32,7 +32,7 @@ export default function Home() {
       setPosition(data.position)
       setWaitTime(data.waitTime)
       if(data.position == 0){
-        console.log("あなたの版が来ました！チケット購入ページへ移動します。")
+        console.log("あなたの番が来ました！チケット購入ページへ移動します。")
         clearInterval(interval)
 
         const checkInRes = await fetch(`/api/checkin`,{
