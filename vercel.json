@@ -31,10 +31,6 @@
     {
       "src": "/api/checkin",
       "dest": "api/checkin/index.go"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "frontend"
     }
   ]
 }
