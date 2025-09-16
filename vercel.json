@@ -37,8 +37,8 @@
       "dest": "frontend/.next/server/app/purchase/page" 
     },
     { 
-      "src": "/", 
-      "dest": "frontend/.next/server/app/page" 
+      "src": "/(.*)", 
+      "dest": "frontend/src/app/$1" 
     }
   ]
 }
