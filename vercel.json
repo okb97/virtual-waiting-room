@@ -21,6 +21,10 @@
   ],
   "routes": [
     {
+      "src": "/purchase",
+      "dest": "app/purchase/page.tsx"
+    },
+    {
       "src": "/_next/static/(.*)",
       "dest": "frontend/_next/static/$1"
     },
