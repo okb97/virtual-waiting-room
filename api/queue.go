@@ -42,10 +42,6 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		HandleStatus(w, r)
 		return
 	}
-	if r.Method == http.MethodDelete && r.URL.Path == "/api/checkin" {
-		HandleCheckIn(w, r)
-		return
-	}
 	w.WriteHeader(http.StatusMethodNotAllowed)
 }
 
@@ -84,16 +80,6 @@ func HandleStatus(w http.ResponseWriter, r *http.Request) {
 		Position: pos,
 		WaitTime: waitTime,
 	})
-}
-
-func HandleCheckIn(w http.ResponseWriter, r *http.Request) {
-	ticketId, err := PopFromQueue("queue")
-	if err != nil {
-		log.Println("PopFromQueue error:", err)
-		http.Error(w, "failed to get ticket from queue", http.StatusInternalServerError)
-		return
-	}
-	json.NewEncoder(w).Encode(JoinResponse{TicketID: ticketId})
 }
 
 func RedisCommand(command []interface{}) ([]byte, error) {
@@ -173,21 +159,6 @@ func PushToQueue(queueName string, items ...string) (int, error) {
 		return 0, fmt.Errorf("Push結果のJSONパースエラー: %v (受信: %s)", err, string(res))
 	}
 	return result, nil
-}
-
-func PopFromQueue(queueName string) (string, error) {
-	res, err := RedisCommand([]interface{}{"LPOP", queueName})
-	if err != nil {
-		return "", err
-	}
-	var popResult string
-	if err := json.Unmarshal(res, &popResult); err != nil {
-		if string(res) == "null" {
-			return "", nil
-		}
-		return "", fmt.Errorf("Pop結果のJSONパースエラー: %v", err)
-	}
-	return popResult, nil
 }
 
 func GetQueuePosition(queueName, ticketId string) (int, error) {
