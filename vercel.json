@@ -12,7 +12,7 @@
       }
     },
     {
-      "src": "api/checkin.go",
+      "src": "api/checkin/index.go",
       "use": "@vercel/go",
       "config": {
         "zeroConfig": true
@@ -30,7 +30,7 @@
     },
     {
       "src": "/api/checkin",
-      "dest": "api/checkin.go"
+      "dest": "api/checkin/index.go"
     },
     {
       "src": "/(.*)",
