@@ -33,10 +33,6 @@
       "dest": "api/checkin/index.go"
     },
     { 
-      "src": "/purchase", 
-      "dest": "frontend/.next/server/app/purchase/page" 
-    },
-    { 
       "src": "/(.*)",
       "dest": "/frontend/$1"
     }
