@@ -12,7 +12,7 @@
       }
     },
     {
-      "src": "api/checkin/index.go",
+      "src": "api/eligible/index.go",
       "use": "@vercel/go",
       "config": {
         "zeroConfig": true
