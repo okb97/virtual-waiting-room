@@ -29,8 +29,8 @@
       "dest": "api/queue.go"
     },
     {
-      "src": "/api/checkin",
-      "dest": "api/checkin/index.go"
+      "src": "/api/eligible",
+      "dest": "api/eligible/index.go"
     },
     { 
       "src": "/(.*)",

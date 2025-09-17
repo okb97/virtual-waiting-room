@@ -33,25 +33,22 @@ export default function Home() {
       const data = await res.json()
       setPosition(data.position)
       setWaitTime(data.waitTime)
-      if(data.position == 0){
-        console.log("あなたの番が来ました！チケット購入ページへ移動します。")
-        clearInterval(interval)
-
-        const checkInRes = await fetch(`/api/checkin`,{
-          method:'DELETE'
-        })
-
-        if(checkInRes.ok){
-          router.push('/purchase');
-        }
-        else{
-          console.error("キューの削除に失敗しました")
-        }
-      }
-    },30000)
+    },10000)
     return () => clearInterval(interval)
   },[ticketId])
 
+  useEffect(() => {
+    if (!ticketId) return;
+    const interval = setInterval(async () => {
+      const res = await fetch(`/api/eligible?ticketId=${ticketId}`);
+      const data = await res.json();
+      if (data.canPurchase) {
+        clearInterval(interval);
+        router.push('/purchase');
+      }
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [ticketId, router]);
 
   return (
     <main>

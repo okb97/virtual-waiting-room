@@ -5,17 +5,24 @@ import (
 	"net/http"
 
 	"github.com/okb97/virtual-waiting-room/api"
-	"github.com/okb97/virtual-waiting-room/api/checkin"
+	"github.com/okb97/virtual-waiting-room/api/eligible"
 )
 
 func main() {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/api/queue", api.Handler)
-	mux.HandleFunc("/api/checkin", checkin.Handler)
+	mux.HandleFunc("/api/eligible", eligible.Handler)
+
+	if err := eligible.AllowNextBatch(); err != nil {
+		log.Println("AllowNextBatch error:", err)
+	} else {
+		log.Println("AllowNextBatch executed successfully")
+	}
 
 	log.Println("Starting server on :8080")
 	if err := http.ListenAndServe(":8080", mux); err != nil {
 		log.Fatal(err)
 	}
+
 }
