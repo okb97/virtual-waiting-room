@@ -74,7 +74,7 @@ func HandleStatus(w http.ResponseWriter, r *http.Request) {
 
 	pos := int64(queueLength)
 	log.Printf("Calculated position: %d", pos)
-	waitTime := pos / 10
+	waitTime := pos/10 + 1
 
 	json.NewEncoder(w).Encode(StatusResponse{
 		Position: pos,

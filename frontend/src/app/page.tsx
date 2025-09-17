@@ -52,8 +52,8 @@ export default function Home() {
     <main>
       <h1>仮想待合室</h1>
       <p className="mb-2">あなたのチケットID: <strong>{ticketId}</strong></p>
-          <p className="mb-2">現在の順番: {position !== null ? position + 1 : "順番探索中"} 番目</p>
-          <p className="mb-4">推定待ち時間: {waitTime !== null ? waitTime : "待ち時間探索中"} 分</p>
+          <p className="mb-2">現在の順番: {position !== null ? `${position + 1} 番目` : "順番探索中"}</p>
+          <p className="mb-4">推定待ち時間: {waitTime !== null ? `${waitTime} 分` : "待ち時間探索中"}</p>
     </main>
   );
 }
