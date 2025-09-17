@@ -19,8 +19,6 @@ export default function Home() {
       const data = await res.json();
       console.log("response data:", data);
       setTicketId(data.ticketId)
-      setPosition(5)
-      setWaitTime(100)
     }
     joinQueue();
   },[])
@@ -46,7 +44,7 @@ export default function Home() {
         clearInterval(interval);
         router.push('/purchase');
       }
-    }, 10000);
+    }, 30000);
     return () => clearInterval(interval);
   }, [ticketId, router]);
 
@@ -54,8 +52,8 @@ export default function Home() {
     <main>
       <h1>仮想待合室</h1>
       <p className="mb-2">あなたのチケットID: <strong>{ticketId}</strong></p>
-          <p className="mb-2">現在の順番: {position} 番目</p>
-          <p className="mb-4">推定待ち時間: {waitTime} 分</p>
+          <p className="mb-2">現在の順番: {position !== null ? position + 1 : "順番探索中"} 番目</p>
+          <p className="mb-4">推定待ち時間: {waitTime !== null ? waitTime : "待ち時間探索中"} 分</p>
     </main>
   );
 }
