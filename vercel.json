@@ -17,6 +17,13 @@
       "config": {
         "zeroConfig": true
       }
+    },
+    {
+      "src": "api/cron/index.go",
+      "use": "@vercel/go",
+      "config": {
+        "zeroConfig": true
+      }
     }
   ],
   "routes": [
@@ -31,6 +38,10 @@
     {
       "src": "/api/eligible",
       "dest": "api/eligible/index.go"
+    },
+    {
+      "src": "/api/cron",
+      "dest": "api/cron/index.go"
     },
     { 
       "src": "/(.*)",

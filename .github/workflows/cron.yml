@@ -1,0 +1,11 @@
+name: Call Vercel API every minute
+on:
+  schedule:
+    - cron: "*/1 * * * *"
+  workflow_dispatch:
+jobs:
+  call-vercel:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger API endpoint
+        run: curl -sS https://vercel.com/okb97s-projects/virtual-waiting-room2/api/cron

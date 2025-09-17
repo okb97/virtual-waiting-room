@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/okb97/virtual-waiting-room/api"
+	"github.com/okb97/virtual-waiting-room/api/cron"
 	"github.com/okb97/virtual-waiting-room/api/eligible"
 )
 
@@ -14,7 +15,7 @@ func main() {
 	mux.HandleFunc("/api/queue", api.Handler)
 	mux.HandleFunc("/api/eligible", eligible.Handler)
 
-	if err := eligible.AllowNextBatch(); err != nil {
+	if err := cron.AllowNextBatch(); err != nil {
 		log.Println("AllowNextBatch error:", err)
 	} else {
 		log.Println("AllowNextBatch executed successfully")

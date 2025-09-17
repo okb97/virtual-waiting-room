@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/okb97/virtual-waiting-room/api"
-	"github.com/okb97/virtual-waiting-room/api/checkin"
 )
 
 func TestMain(m *testing.M) {
@@ -51,28 +50,6 @@ func TestPushToQueueIntegration(t *testing.T) {
 		if items[i] != v {
 			t.Errorf("expected %s at position %d, got %s", v, i, items[i])
 		}
-	}
-}
-
-func TestPopFromQueueIntegration(t *testing.T) {
-	queueName := "integration_test_queue"
-	ticket1 := "ticket_1"
-
-	clearQueue(t, queueName)
-
-	_, err := api.RedisCommand([]interface{}{"RPUSH", queueName, ticket1})
-	if err != nil {
-		t.Fatalf("RPUSHエラー: %v", err)
-	}
-
-	val, err := checkin.PopFromQueue(queueName)
-	if err != nil {
-		t.Fatalf("PopFromQueueエラー: %v", err)
-	}
-
-	expected := ticket1
-	if val != expected {
-		t.Errorf("Pop結果が不正 got=%s want=%s", val, expected)
 	}
 }
 

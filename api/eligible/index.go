@@ -34,29 +34,3 @@ func HandleEligible(w http.ResponseWriter, r *http.Request) {
 	json.Unmarshal(exists, &ok)
 	json.NewEncoder(w).Encode(map[string]bool{"canPurchase": ok == 1})
 }
-
-func AllowNextBatch() error {
-	const BATCHSIZE = 10
-	res, err := api.RedisCommand([]interface{}{"LRANGE", "queue", 0, BATCHSIZE - 1})
-	if err != nil {
-		return err
-	}
-	var ids []string
-	json.Unmarshal(res, &ids)
-
-	if len(ids) == 0 {
-		return nil
-	}
-
-	cmd := []interface{}{"SADD", "eligible"}
-	for _, id := range ids {
-		cmd = append(cmd, id)
-	}
-	if _, err := api.RedisCommand(cmd); err != nil {
-		return err
-	}
-
-	rem := []interface{}{"LTRIM", "queue", len(ids), -1}
-	_, err = api.RedisCommand(rem)
-	return err
-}
