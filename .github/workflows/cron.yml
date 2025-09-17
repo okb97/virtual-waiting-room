@@ -8,4 +8,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger API endpoint
-        run: curl -sS https://vercel.com/okb97s-projects/virtual-waiting-room2/api/cron
+        run: curl -sS https://virtual-waiting-room2.vercel.app/api/cron
