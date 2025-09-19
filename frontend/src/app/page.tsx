@@ -8,6 +8,8 @@ export default function Home() {
   const [ticketId, setTicketId] = useState<string | null>(null)
   const [position, setPosition] = useState<number | null>(null)
   const [waitTime, setWaitTime] = useState<number | null>(null)
+  const [initialWait, setInitialWait] = useState<number | null>(null)
+  
 
   useEffect(() => {
     const joinQueue = async () => {
@@ -48,12 +50,28 @@ export default function Home() {
     return () => clearInterval(interval);
   }, [ticketId, router]);
 
+  const progress = (() => {
+    if (initialWait === null || waitTime === null) return 0
+    const done = initialWait - waitTime
+    const percent = (done / initialWait) * 100
+    return Math.min(Math.max(percent, 0), 100)
+  })()
+
   return (
     <main>
       <h1>仮想待合室</h1>
       <p className="mb-2">あなたのチケットID: <strong>{ticketId}</strong></p>
-          <p className="mb-2">現在の順番: {position !== null ? `${position + 1} 番目` : "順番探索中"}</p>
-          <p className="mb-4">推定待ち時間: {waitTime !== null ? `${waitTime} 分` : "待ち時間探索中"}</p>
+      <p className="mb-2">現在の順番: {position !== null ? `${position + 1} 番目` : "順番探索中"}</p>
+      <p className="mb-4">推定待ち時間: {waitTime !== null ? `${waitTime} 分` : "待ち時間探索中"}</p>
+      <div className="w-full bg-gray-200 rounded-full h-6 shadow-inner">
+        <div
+          className="bg-green-500 h-6 rounded-full text-white flex items-center justify-center text-sm transition-all duration-500 ease-out"
+          style={{ width: `${progress}%` }}
+        >
+          {progress.toFixed(0)}%
+        </div>
+      </div>
     </main>
+    
   );
 }
